@@ -28,7 +28,7 @@
     const router = useRouter()
 
     const menus = [
-        { title: 'Transaksi', icon: ShoppingCartIcon, route: '/checkout' },
+        { title: 'Transaksi', icon: ShoppingCartIcon, route: '/transaction' },
         { title: 'Cari Produk', icon: MagnifyingGlassIcon, route: '/checkout' },
         { title: 'Cetak Struk', icon: PrinterIcon, route: '/checkout' },
         { title: 'Retur Barang', icon: ArrowUturnLeftIcon, route: '/checkout' },

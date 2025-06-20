@@ -5,6 +5,7 @@ import CheckoutPage from '../pages/kasir/CheckoutPage.vue'
 import HomePage from '../pages/kasir/HomePage.vue'
 import AdminDashboard from '../pages/admin/AdminDashboard.vue'
 import ManageUser from '../pages/admin/ManageUser.vue'
+import TransactionPage from '../pages/kasir/TransactionPage.vue'
 import { getUser } from '../services/authService'
 
 const routes = [
@@ -16,7 +17,17 @@ const routes = [
         meta: { requiresAuth: true, roles: ["kasir"] }
     },
     {
-        path: '/checkout', 
+        path: '/transaction', 
+        component: TransactionPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
+    },
+    {
+        path: '/transaction/checkout', 
+        component: CheckoutPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
+    },
+    {
+        path: '/transaction/struk', 
         component: CheckoutPage,
         meta: { requiresAuth: true, roles: ['kasir'] }
     },
