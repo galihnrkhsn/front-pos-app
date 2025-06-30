@@ -1,24 +1,33 @@
 <template>
-    <div class="shadow rounded p-6">
+    <div class="shadow rounded p-6 bg-gray-50">
         <PageHeader title="Transaction" @back="goBack"/>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
-                <h3 class="text-lg font-medium mb-2">Produk</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    <button v-for="product in products" :key="product.id" @click="addToCart(product)"
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Cari Produk..."
+                    class="px-4 mb-5 py-2 border border-gray-300 rounded w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+                <div v-if="filteredProducts.length === 0" class="text-gray-500">
+                    Produk tidak ada.
+                </div>
+                <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <button v-for="product in filteredProducts" :key="product.id" @click="addToCart(product)"
                         class="bg-white hover:bg-blue-50 border rounded-lg p-4 flex flex-col items-center shadow transition cursor-pointer"
                     >
                         <div class="font-semibold text-sm mb-1">
                             {{ product.nama }}
                         </div>
-                        <div class="text-gray-500 text-xs">
+                        <div class="text-gray-500 text-sm">
                             {{ product.harga.toLocaleString() }}
                         </div>
+                        <p class="text-xs text-gray-400">{{ product.barcode }}</p>
                     </button>
                 </div>
             </div>
             <div class="p-4 rounded border">
-                <h3 class="text-lg font-medium mb-2">Keranjang</h3>
+                <h3 class="text-lg font-medium border-b mb-2">Keranjang</h3>
                 <div v-if="cart.length === 0" class="text-sm text-gray-400">
                     Keranjang Kosong
                 </div>
@@ -58,10 +67,12 @@
     import PageHeader from '../../components/ui/PageHeader.vue';
     import { useRouter } from 'vue-router';
 
-    const router = useRouter()
-    const products = ref([])
-    const cart = ref([])
-    const user = getUser()
+    const router        = useRouter()
+    const products      = ref([])
+    const cart          = ref([])
+    const user          = getUser()
+    const searchQuery   = ref('')
+
     function goBack(){
         router.back()
     }
@@ -72,7 +83,7 @@
 
     async function loadProducts() {
         try {
-            const response = await axios.get("http://localhost/project/pos-app/public/products", {
+            const response = await axios.get("http://localhost/project/pos-app/public/products?group_by=stock", {
                 withCredentials: true
             })
             if (response.data.status === 'success') {
@@ -124,4 +135,11 @@
         localStorage.setItem('cart', JSON.stringify(cart.value))
         router.push('/transaction/checkout')
     }
+
+    const filteredProducts = computed(() => {
+        return products.value.filter(p => {
+            const matchName = p.nama.toLowerCase().includes(searchQuery.value.toLowerCase())
+            return matchName
+        })
+    })
 </script>

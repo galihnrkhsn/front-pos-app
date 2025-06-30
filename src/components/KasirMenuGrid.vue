@@ -1,3 +1,25 @@
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .struk-print-area, .struk-print-area * {
+                visibility: visible;
+            }
+
+            .struk-print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
 <template>
     <div class="p-6">
         <h2 class="text-2xl font-semibold mb-6">
@@ -29,8 +51,8 @@
 
     const menus = [
         { title: 'Transaksi', icon: ShoppingCartIcon, route: '/transaction' },
-        { title: 'Cari Produk', icon: MagnifyingGlassIcon, route: '/checkout' },
-        { title: 'Cetak Struk', icon: PrinterIcon, route: '/checkout' },
+        { title: 'Cari Produk', icon: MagnifyingGlassIcon, route: '/products' },
+        { title: 'Cetak Struk', icon: PrinterIcon, route: '/transactions' },
         { title: 'Retur Barang', icon: ArrowUturnLeftIcon, route: '/checkout' },
         { title: 'Laporan', icon: ChartBarIcon, route: '/checkout' },
     ]

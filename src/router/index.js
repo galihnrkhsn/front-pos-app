@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getUser } from '../services/authService'
 import LoginPage from '../pages/auth/LoginPage.vue'
 import RegisterPage from '../pages/auth/RegisterPage.vue'
 import CheckoutPage from '../pages/kasir/CheckoutPage.vue'
@@ -6,14 +7,30 @@ import HomePage from '../pages/kasir/HomePage.vue'
 import AdminDashboard from '../pages/admin/AdminDashboard.vue'
 import ManageUser from '../pages/admin/ManageUser.vue'
 import TransactionPage from '../pages/kasir/TransactionPage.vue'
-import { getUser } from '../services/authService'
+import ProductPage from '../pages/kasir/ProductPage.vue'
+import EditProductPage from '../pages/kasir/EditProductPage.vue'
+import StrukPage from '../pages/kasir/StrukPage.vue'
+import TransactionsPage from '../pages/kasir/transactionsPage.vue'
 
 const routes = [
     {path: '/', component: LoginPage},
     {path: '/register', component: RegisterPage},
     {
-        path: '/home', 
+        path: '/home',
         component: HomePage,
+        meta: { requiresAuth: true, roles: ["kasir"] }
+    },
+
+    // products
+    {
+        path: '/products',
+        component: ProductPage,
+        meta: { requiresAuth: true, roles: ["kasir"] }
+    },
+    {
+        path: '/products/:id/edit',
+        name: 'edit-product',
+        component: EditProductPage,
         meta: { requiresAuth: true, roles: ["kasir"] }
     },
     {
@@ -22,8 +39,18 @@ const routes = [
         meta: { requiresAuth: true, roles: ['kasir'] }
     },
     {
+        path: '/transactions',
+        component: TransactionsPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
+    },
+    {
         path: '/transaction/checkout', 
         component: CheckoutPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
+    },
+    {
+        path: '/transaction/struk',
+        component: StrukPage,
         meta: { requiresAuth: true, roles: ['kasir'] }
     },
     {
@@ -37,7 +64,7 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin'] }
     },
     {
-        path: '/dmin/user',
+        path: '/admin/user',
         component: ManageUser,
         meta: { requiresAuth: true, roles: ['admin'] }
     }

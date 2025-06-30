@@ -20,7 +20,7 @@
         <button
             v-if="showBack"
             @click="handleBack"
-            class="bg-indigo-300 hover:bg-indigo-500 text-indigo-700 px-4 py-2 rounded shadow"
+            class="bg-indigo-300 hover:bg-indigo-500 text-black px-4 py-2 rounded shadow cursor-pointer"
         >
             Kembali
         </button>

@@ -16,6 +16,10 @@
         logout()
         router.push('/')
     }
+
+    function goHome(){
+        router.push('home')
+    }
 </script>
 
 <template>
@@ -23,8 +27,8 @@
         <template v-if="!hideLayout">
             <nav class="bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <div class="text-xl font-bold text-indigo-600">
-                POS App
+                <div @click="goHome()" class="cursor-pointer text-xl font-bold text-indigo-600">
+                    POS App
                 </div>
                 <div class="space-x-6">
                 <button 

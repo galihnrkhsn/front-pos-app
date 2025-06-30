@@ -20,17 +20,19 @@
                 <div class="mb-3">
                     <label class="block text-sm mb-1">Metode Pembayaran</label>
                     <select v-model="metode" class="w-full border rounded px-2 py-1">
-                        <option value="tunai">Tunai</option>
+                        <option value="cash">Tunai</option>
                         <option value="qris">QRIS</option>
                         <option value="edc">EDC</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label class="block text-sm mb-1">Uang Dibayar (Rp)</label>
-                    <input type="number" v-model.number="bayar" class="w-full border rounded px-2 py-1" :disabled="metode !== 'tunai'">
+                    <input type="number" v-model.number="bayar" class="w-full border rounded px-2 py-1" :disabled="metode !== 'cash'">
                 </div>
-                <div class="mb-4 text-right text-green-600 font-semibold" v-if="metode === 'tunai'">
-                    Kembalian: Rp {{ kembalian.toLocaleString() }}
+                <div class="mb-4 text-right font-semibold" v-if="metode === 'cash'">
+                    <p v-if="kembalian < 0" class="text-red-700">Kembalian: Rp {{ kembalian.toLocaleString() }}</p>
+                    <p v-else class="text-green-600">Kembalian: Rp  {{ kembalian.toLocaleString() }}</p>
+                    
                 </div>
 
                 <button @click="prosesTransaksi"
@@ -50,18 +52,19 @@
 
 
 <script setup>
-    import { useRouter } from 'vue-router';
-    import PageHeader from '../../components/ui/PageHeader.vue';
-    import { ref, computed, onMounted } from 'vue'
     import axios from 'axios';
+    import PageHeader from '../../components/ui/PageHeader.vue';
+    import { useRouter } from 'vue-router';
+    import { ref, computed, onMounted } from 'vue'
     import { getUser } from '../../services/authService';
 
     const user      = getUser()
     const router    = useRouter()
     const cart      = ref([])
-    const metode    = ref('tunai')
+    const metode    = ref('')
     const bayar     = ref(0)
     const loading   = ref(false)
+    const API_URL   = 'http://localhost/project/pos-app/public/'
 
     onMounted(() => {
         const savedCart = localStorage.getItem('cart')
@@ -77,11 +80,11 @@
     })
 
     const kembalian = computed(() => {
-        return metode.value === 'tunai' ? (bayar.value - total.value) : 0
+        return metode.value === 'cash' ? (bayar.value - total.value) : 0
     })
 
     async function prosesTransaksi() {
-        if (metode.value === 'tunai' && bayar.value < total.value) {
+        if (metode.value === 'cash' && bayar.value < total.value) {
             alert('Uang tidak cukup!')
             return
         }
@@ -91,19 +94,19 @@
         try {
             const payload = {
                 payment_type: metode.value,
-                paid_amount: metode.value === 'tunai' ? bayar.value : total.value,
+                paid_amount: metode.value === 'cash' ? bayar.value : total.value,
                 items: cart.value.map(item => ({
                     product_id: item.id,
                     qty: item.qty,
                     price: item.harga
                 }))
             }
-            const response = await axios.post('http://localhost/project/pos-app/public/transactions', payload, {
-                headers: { 'Content-type': 'application/json' }
+            const response = await axios.post(`${API_URL}transactions`, payload, {
+                headers: { 'Content-type': 'application/json' },
+                withCredentials: true,
             })
 
-            const struk = response.data
-
+            const struk = response.data.data
             localStorage.setItem('struk', JSON.stringify(struk))
             localStorage.setItem('cart_before_checkout', JSON.stringify(cart.value))
             localStorage.setItem('paid_amount', bayar.value)
