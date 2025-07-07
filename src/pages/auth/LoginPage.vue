@@ -35,7 +35,12 @@
     const password      = ref('')
     const error         = ref('')
     const router        = useRouter()
+    const token         = localStorage.getItem('user');
 
+    if (token) {
+        alert('Anda sudah login!');
+        router.push('/home')
+    }
 
     async function handleLogin() {
         try {

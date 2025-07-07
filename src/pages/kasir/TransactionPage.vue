@@ -1,6 +1,6 @@
 <template>
+    <PageHeader title="Transaction" @back="goBack" class="shadow p-4 rounded"/>
     <div class="shadow rounded p-6 bg-gray-50">
-        <PageHeader title="Transaction" @back="goBack"/>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
                 <input

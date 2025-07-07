@@ -97,38 +97,11 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-center items-center gap-2 mt-6">
-            <button
-                @click="changePage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50"
-            >
-                &laquo;
-            </button>
-
-            <button
-                v-for="page in totalPage"
-                :key="page"
-                @click="changePage(page)"
-                :class="[
-                'px-3 py-1 rounded',
-                currentPage === page
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200'
-                ]"
-            >
-                {{ page }}
-            </button>
-
-            <button
-                @click="changePage(currentPage + 1)"
-                :disabled="currentPage === totalPage"
-                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50"
-            >
-                &raquo;
-            </button>
-        </div>
-
+        <Paginate 
+            :current="currentPage"
+            :total="totalPage"
+            @change="changePage"
+        />
         <transition name="fade">
             <div v-if="showModal" class="fixed inset-0 bg-gray-500/60 flex items-center justify-center z-50">
                 <div class="bg-white p-6 rounded shadow-md w-full max-w-md relative">
@@ -152,8 +125,8 @@
                         </div>
                     </div>
                     <div class="mt-6 flex justify-end gap-2">
-                        <button @click="showModal = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-                        <button @click="submitEdit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">Simpan</button>
+                        <button @click="showModal = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">Batal</button>
+                        <button @click="submitEdit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 cursor-pointer">Simpan</button>
                     </div>
 
                     <button @click="showModal = false" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">x</button>
@@ -174,6 +147,7 @@
     import { getUser } from '../../services/authService'
     import { useRouter } from 'vue-router';
     import { InboxStackIcon, PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline';
+    import Paginate from '../../components/Paginate.vue';
 
     const alert             = ref({ type: '', message: '' })
     const products          = ref([])
@@ -186,7 +160,7 @@
     const showAddModal      = ref(false)
     const bulkEdit          = ref(false)
     const currentPage       = ref(1)
-    const limit             = 8
+    const perPage           = 8
     const API_URL           = 'http://localhost/project/pos-app/public/'
     const editForm          = ref({
         productId: null,
@@ -375,14 +349,14 @@
         })
     })
 
-    const paginateProducts = computed(() => {
-        const start = (currentPage.value - 1) * limit
-        const end = start + limit
-        return filteredProducts.value.slice(start, end)
-    })
-
     const totalPage = computed(() => {
-        return Math.ceil(filteredProducts.value.length / limit)
+        return Math.ceil(filteredProducts.value.length / perPage)
+    })
+    
+    const paginateProducts = computed(() => {
+        const start = (currentPage.value - 1) * perPage
+        const end = start + perPage
+        return filteredProducts.value.slice(start, end)
     })
 
     function changePage(page) {

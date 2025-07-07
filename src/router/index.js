@@ -11,6 +11,8 @@ import ProductPage from '../pages/kasir/ProductPage.vue'
 import EditProductPage from '../pages/kasir/EditProductPage.vue'
 import StrukPage from '../pages/kasir/StrukPage.vue'
 import TransactionsPage from '../pages/kasir/transactionsPage.vue'
+import TransactionDetailPage from '../pages/kasir/TransactionDetailPage.vue'
+import ReportPage from '../pages/kasir/ReportPage.vue'
 
 const routes = [
     {path: '/', component: LoginPage},
@@ -44,6 +46,12 @@ const routes = [
         meta: { requiresAuth: true, roles: ['kasir'] }
     },
     {
+        path: '/transactions/:id',
+        name: 'transaction-detail',
+        component: TransactionDetailPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
+    },
+    {
         path: '/transaction/checkout', 
         component: CheckoutPage,
         meta: { requiresAuth: true, roles: ['kasir'] }
@@ -67,6 +75,11 @@ const routes = [
         path: '/admin/user',
         component: ManageUser,
         meta: { requiresAuth: true, roles: ['admin'] }
+    },
+    {
+        path: '/report',
+        component: ReportPage,
+        meta: { requiresAuth: true, roles: ['kasir'] }
     }
 ]
 

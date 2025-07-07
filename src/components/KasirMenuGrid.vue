@@ -54,7 +54,7 @@
         { title: 'Cari Produk', icon: MagnifyingGlassIcon, route: '/products' },
         { title: 'Cetak Struk', icon: PrinterIcon, route: '/transactions' },
         { title: 'Retur Barang', icon: ArrowUturnLeftIcon, route: '/checkout' },
-        { title: 'Laporan', icon: ChartBarIcon, route: '/checkout' },
+        { title: 'Laporan', icon: ChartBarIcon, route: '/report' },
     ]
 
     function handleClick(menu) {

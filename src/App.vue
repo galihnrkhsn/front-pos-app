@@ -18,7 +18,7 @@
     }
 
     function goHome(){
-        router.push('home')
+        router.push('/home')
     }
 </script>
 
