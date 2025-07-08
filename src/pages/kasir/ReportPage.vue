@@ -175,20 +175,39 @@
                         message: 'Tidak ada transaksi pada periode tersebut.'
                     }
                 }, 10)
+                return false
             } else {
                 alert.value = { type: '', message: '' }
+                return true
             }
         } catch (err) {
             console.error('Gagal mengambil data laporan: ', err)
-            alert.value = { type: 'error', message: 'Gagal memuat Laporan' }
+            alert.value = { type: '', message: '' }
+            setTimeout(() => {
+                alert.value = {
+                    type: 'error',
+                    message: 'Gagal mengambil data Laporan.'
+                }
+            }, 10)
+            return false
         } finally {
             loading.value = false
         }
     }
 
     async function exportExcel() {
-        await loadReport()
+        const success = await loadReport()
 
+        if (!success) {
+            alert.value = { type: '', message: '' }
+            setTimeout(() => {
+                alert.value = {
+                    type: 'error',
+                    message: 'Export gagal, tidak ada transaksi di periode tersebut!.'
+                }
+            }, 10)
+            return
+        }
         const exportData = [
             {
                 'Total Pendapatan': report.value.total_income,

@@ -55,7 +55,7 @@
             </main>
             
             <footer class="bg-white shadow-inner mt-auto py-4 text-center text-gray-500 text-sm">
-                &copy; 2025 POS App. All rights reserved.
+                &copy; 2025 POS App. Galih Nur Ikhsan.
             </footer>
         </template>
         <template v-else>
