@@ -8,8 +8,8 @@
 </style>
 <template>
     <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message"/>
+    <PageHeader title="Product" @back="goBack" class="p-4 shadow rounded" />
     <div class="p-6 shadow rounded min-h-screen">
-        <PageHeader title="Product" @back="goBack" />
         <div class="flex items-center justify-between mb-6">
             <div class="flex gap-2">
                 <button
@@ -97,44 +97,44 @@
                 </div>
             </div>
         </div>
-        <Paginate 
-            :current="currentPage"
-            :total="totalPage"
-            @change="changePage"
-        />
-        <transition name="fade">
-            <div v-if="showModal" class="fixed inset-0 bg-gray-500/60 flex items-center justify-center z-50">
-                <div class="bg-white p-6 rounded shadow-md w-full max-w-md relative">
-                    <h3 class="text-lg font-semibold mb-4">Edit Produk</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nama Produk</label>
-                            <input type="text" v-model="editForm.productName" class="mt-1 w-full border px-3 py-2 rounded" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                            <select v-model="editForm.category_id" class="mt-1 w-full border px-3 py-2 rounded">
-                                <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
-                                    {{ cat.categoryName || cat }}
-                                </option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Harga</label>
-                            <input type="number" v-model="editForm.price" class="mt-1 w-full border px-3 py-2 runded">
-                        </div>
-                    </div>
-                    <div class="mt-6 flex justify-end gap-2">
-                        <button @click="showModal = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">Batal</button>
-                        <button @click="submitEdit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 cursor-pointer">Simpan</button>
-                    </div>
-
-                    <button @click="showModal = false" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">x</button>
-                </div>
-            </div>
-        </transition>
         <ModalAdd :show="showAddModal" :categories="categories" @close="showAddModal = false" @submit="submitNewProduct"/>
     </div>
+    <Paginate 
+        :current="currentPage"
+        :total="totalPage"
+        @change="changePage"
+    />
+    <transition name="fade">
+        <div v-if="showModal" class="fixed inset-0 bg-gray-500/60 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded shadow-md w-full max-w-md relative">
+                <h3 class="text-lg font-semibold mb-4">Edit Produk</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nama Produk</label>
+                        <input type="text" v-model="editForm.productName" class="mt-1 w-full border px-3 py-2 rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                        <select v-model="editForm.category_id" class="mt-1 w-full border px-3 py-2 rounded">
+                            <option v-for="cat in categories" :key="cat.categoryId" :value="cat.categoryId">
+                                {{ cat.categoryName || cat }}
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Harga</label>
+                        <input type="number" v-model="editForm.price" class="mt-1 w-full border px-3 py-2 runded">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-2">
+                    <button @click="showModal = false" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">Batal</button>
+                    <button @click="submitEdit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 cursor-pointer">Simpan</button>
+                </div>
+
+                <button @click="showModal = false" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">x</button>
+            </div>
+        </div>
+    </transition>
 </template>
 
 
@@ -160,7 +160,7 @@
     const showAddModal      = ref(false)
     const bulkEdit          = ref(false)
     const currentPage       = ref(1)
-    const perPage           = 8
+    const perPage           = 12
     const API_URL           = 'http://localhost/project/pos-app/public/'
     const editForm          = ref({
         productId: null,

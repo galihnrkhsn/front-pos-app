@@ -1,7 +1,7 @@
 <template>
     <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" />
+    <PageHeader title="Semua Transaksi" @back="goBack" class="shadow p-4 max-w-5xl mx-auto rounded" />
     <div class="p-4 max-w-5xl mx-auto shadow-sm">
-        <PageHeader title="Semua Transaksi" @back="goBack" />
         <div class="text-sm text-gray-600 mb-2">
             Total Pemasukan Hari ini: <span class="text-gray-600 font-semibold">Rp {{ totalHarian.toLocaleString() }}</span>
         </div>

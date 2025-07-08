@@ -1,8 +1,7 @@
 <template>
     <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" />
-    <PageHeader title="Report" @back="goBack"/>
+    <PageHeader title="Report" @back="goBack" class="p-4 shadow rounded"/>
     <div class="p-4 shadow-sm bg-gray-50 rounded">
-        <!-- Filter Panel -->
         <fieldset class="border border-gray-300 rounded p-4 mb-6">
             <legend class="text-sm text-gray-600 font-medium px-2">Pilih Jenis Laporan</legend>
             <div class="flex flex-wrap gap-4 items-center">
@@ -21,7 +20,6 @@
             </div>
         </fieldset>
 
-        <!-- Date Filter -->
         <div class="flex flex-wrap gap-4 items-center mb-6">
             <template v-if="filterType === 'daily'">
                 <input type="date" v-model="selectedDate" class="border px-3 py-2 rounded w-full sm:w-auto">
@@ -42,17 +40,20 @@
                 </select>
             </template>
 
-            <!-- Tampilkan Button -->
             <button
                 @click="loadReport"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2 cursor-pointer"
             >
                 Tampilkan
             </button>
+            <button
+                @click="exportExcel"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2 cursor-pointer"
+            >
+                Export Excel
+            </button>
         </div>
-        <!-- Report Summary -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Jumlah Transaksi -->
             <div class="bg-white shadow rounded p-4 flex items-center gap-3">
                 <div class="text-blue-500 text-xl">
                     <i class="fas fa-receipt"></i>
@@ -63,7 +64,6 @@
                 </div>
             </div>
 
-            <!-- Total Pendapatan -->
             <div class="bg-white shadow rounded p-4 flex items-center gap-3">
                 <div class="text-green-500 text-xl">
                     <i class="fas fa-money-bill-wave"></i>
@@ -74,7 +74,6 @@
                 </div>
             </div>
 
-            <!-- Rata-rata Transaksi -->
             <div class="bg-white shadow rounded p-4 flex items-center gap-3">
                 <div class="text-yellow-500 text-xl">
                     <i class="fas fa-chart-line"></i>
@@ -88,8 +87,7 @@
                 </div>
             </div>
 
-            <!-- Produk Terlaris -->
-            <div class="bg-white shadow rounded p-4 sm:col-span-2">
+            <div class="bg-white shadow rounded p-4">
                 <p class="text-gray-500 text-sm mb-1">Produk Terlaris</p>
                 <ol class="list-decimal ml-4 text-sm">
                     <li v-for="product in report.top_products" :key="product.productName">
@@ -97,8 +95,6 @@
                     </li>
                 </ol>
             </div>
-
-            <!-- Metode Pembayaran -->
             <div class="bg-white shadow rounded p-4">
                 <p class="text-gray-500 text-sm mb-1">Metode Pembayaran</p>
                 <ul class="list-disc ml-4 text-sm">
@@ -106,6 +102,14 @@
                         {{ formatPaymentCurrency(metode) }}: Rp {{ formatCurrency(total) }}
                     </li>
                 </ul>
+            </div>
+            <div class="bg-white shadow rounded p-4">
+                <p class="text-gray-500 text-sm mb-1">Top Kasir</p>
+                <ol class="list-decimal ml-4 text-sm">
+                    <li v-for="cashier in report.top_cashier" :key="cashier.user_id">
+                        {{ cashier.name }} ({{ cashier.total_transaction }} Transaksi)
+                    </li>
+                </ol>
             </div>
         </div>
     </div>
@@ -116,6 +120,8 @@
     import PageHeader from '../../components/ui/PageHeader.vue';
     import axios from 'axios';
     import AlertMessage from '../../components/AlertMessage.vue';
+    import { useRouter } from 'vue-router';
+    import * as XLSX from 'xlsx';
 
     const filterType        = ref('daily')
     const selectedDate      = ref(new Date().toISOString().slice(0, 10))
@@ -123,6 +129,8 @@
     const selectedYear      = ref(new Date().getFullYear())
     const alert             = ref({ type: '', message: '' })
     const loading           = ref(false)
+    const router            = useRouter()
+    const API_URL           = 'http://localhost/project/pos-app/public/'
 
     const months = [
         'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
@@ -153,7 +161,7 @@
         }
 
         try {
-            const res = await axios.get('http://localhost/project/pos-app/public/report', {
+            const res = await axios.get(`${API_URL}report`, {
                 params,
                 withCredentials: true
             })
@@ -176,6 +184,40 @@
         } finally {
             loading.value = false
         }
+    }
+
+    async function exportExcel() {
+        await loadReport()
+
+        const exportData = [
+            {
+                'Total Pendapatan': report.value.total_income,
+                'Total Transaksi': report.value.total_transaction,
+                'Rata-rata Transaksi': report.value.avg_transaction
+            }
+        ]
+
+        const exportTopProducts = report.value.top_products?.map(p => ({
+            'Produk Terlaris': p.productName,
+            'Terjual': p.terjual
+        })) || []
+
+        const exportPaymentMethod = Object.entries(report.value.payment_methods || {}).map(([metode, total]) => ({
+            'Metode': metode,
+            'Total': total
+        }))
+
+        const wb = XLSX.utils.book_new()
+        const ws1 = XLSX.utils.json_to_sheet(exportData)
+        XLSX.utils.book_append_sheet(wb, ws1, 'Ringkasan')
+
+        const ws2 = XLSX.utils.json_to_sheet(exportTopProducts)
+        XLSX.utils.book_append_sheet(wb, ws2, 'Produk Terlaris')
+
+        const ws3 = XLSX.utils.json_to_sheet(exportPaymentMethod)
+        XLSX.utils.book_append_sheet(wb, ws3, 'Metode Pembayaran')
+
+        XLSX.writeFile(wb, 'Laporan-penjualan.xlsx')
     }
 
     function formatCurrency(total) {

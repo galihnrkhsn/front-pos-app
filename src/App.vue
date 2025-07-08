@@ -1,8 +1,9 @@
 <script setup>
     import { useRouter, useRoute } from 'vue-router';
-    import { computed, ref } from 'vue';
+    import { computed, onMounted, ref } from 'vue';
     import { logout, getUser } from './services/authService';
     import { PowerIcon } from '@heroicons/vue/24/outline';
+    import { startIdleTime } from './services/idle';
 
     const user      = ref(getUser())
     const router    = useRouter()
@@ -20,6 +21,14 @@
     function goHome(){
         router.push('/home')
     }
+
+    onMounted(() => {
+        startIdleTime(() => {
+            localStorage.removeItem('user')
+
+            router.push('/')
+        })
+    })
 </script>
 
 <template>

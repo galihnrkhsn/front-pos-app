@@ -1,14 +1,14 @@
 <template>
     <PageHeader title="Transaction" @back="goBack" class="shadow p-4 rounded"/>
     <div class="shadow rounded p-6 bg-gray-50">
+        <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Cari Produk..."
+            class="px-4 mb-5 py-2 border border-gray-300 rounded w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Cari Produk..."
-                    class="px-4 mb-5 py-2 border border-gray-300 rounded w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                />
                 <div v-if="filteredProducts.length === 0" class="text-gray-500">
                     Produk tidak ada.
                 </div>
@@ -26,7 +26,7 @@
                     </button>
                 </div>
             </div>
-            <div class="p-4 rounded border">
+            <div class="p-4 rounded border h-full">
                 <h3 class="text-lg font-medium border-b mb-2">Keranjang</h3>
                 <div v-if="cart.length === 0" class="text-sm text-gray-400">
                     Keranjang Kosong
